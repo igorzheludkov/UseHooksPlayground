@@ -8,6 +8,7 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -25,43 +26,17 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import {getScaledSize} from './hooks/getScaledSize';
+import {useTriggerTimer} from './hooks/useTriggerTimer';
 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-const scale = getScaledSize();
-
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text>{scale()}</Text>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-          {fontSize: scale(16)},
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+const scale = getScaledSize({factor: 1});
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const [status, trigger] = useTriggerTimer();
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -77,6 +52,8 @@ function App(): JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         <Header />
+        <Button title="Trigger Timer" onPress={trigger} />
+        {status && <Text>Статус таймер</Text>}
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -120,4 +97,31 @@ const styles = StyleSheet.create({
   },
 });
 
+function Section({children, title}: SectionProps): JSX.Element {
+  const isDarkMode = useColorScheme() === 'dark';
+  return (
+    <View style={styles.sectionContainer}>
+      <Text>{scale(16)}</Text>
+      <Text
+        style={[
+          styles.sectionTitle,
+          {
+            color: isDarkMode ? Colors.white : Colors.black,
+          },
+        ]}>
+        {title}
+      </Text>
+      <Text
+        style={[
+          styles.sectionDescription,
+          {
+            color: isDarkMode ? Colors.light : Colors.dark,
+          },
+          {fontSize: scale(16)},
+        ]}>
+        {children}
+      </Text>
+    </View>
+  );
+}
 export default App;
